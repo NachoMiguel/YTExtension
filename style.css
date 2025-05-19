@@ -1,0 +1,38 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 300px;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.add-channel {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+#channelInput {
+  flex: 1;
+  padding: 5px;
+}
+
+#addChannelBtn {
+  padding: 5px 10px;
+}
+
+#channelList {
+  list-style: none;
+  padding: 0;
+}
+
+#channelList li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
