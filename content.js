@@ -14,13 +14,22 @@
       cursor: "pointer",
     });
 
-    chrome.storage.local.get("competitors", ({ competitors = [] }) => {
-      btn.textContent = competitors.includes(channelId)
-        ? "❌ Remove Competitor"
-        : "⭐ Add as Competitor";
-    });
+    if (chrome?.storage?.local) {
+      chrome.storage.local.get("competitors", ({ competitors = [] }) => {
+        btn.textContent = competitors.includes(channelId)
+          ? "❌ Remove Competitor"
+          : "⭐ Add as Competitor";
+      });
+    } else {
+      console.warn("chrome.storage.local not available during button render");
+    }
 
     btn.onclick = () => {
+      if (!chrome?.storage?.local) {
+        console.warn("chrome.storage.local not available during button click");
+        return;
+      }
+
       chrome.storage.local.get("competitors", ({ competitors = [] }) => {
         const list = [...competitors];
         const idx = list.indexOf(channelId);
@@ -31,9 +40,11 @@
         } else {
           list.push(channelId);
           btn.textContent = "❌ Remove Competitor";
-          /* auto-open big dashboard */
+
+          // Auto-open dashboard modal
           chrome.runtime.sendMessage({ action: "openCompetitorModal" });
         }
+
         chrome.storage.local.set({ competitors: list });
       });
     };
@@ -58,15 +69,13 @@
   }
 
   /* ----------  INITIAL + CONTINUOUS OBSERVER ---------- */
-  tryInsert();                               // first pass
+  tryInsert();  // first pass
 
   let lastUrl = location.href;
   new MutationObserver(() => {
-    // 1) react to SPA navigation
     if (location.href !== lastUrl) {
       lastUrl = location.href;
     }
-    // 2) on every DOM mutation, attempt reinsertion if needed
     requestAnimationFrame(tryInsert);
   }).observe(document, { subtree: true, childList: true });
 })();
