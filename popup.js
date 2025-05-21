@@ -12,7 +12,13 @@ document.getElementById('openCompetitorsBtn').addEventListener('click', () => {
       return;
     }
 
-    // ✅ Inject BOTH content.js and modal.js
+    if (!tab.url.includes("youtube.com")) {
+      isModalOpening = false;
+      alert('Please navigate to a YouTube page to open the competitors dashboard.');
+      return;
+    }
+
+    // ✅ Inject both scripts
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['content.js', 'modal.js']
@@ -20,7 +26,6 @@ document.getElementById('openCompetitorsBtn').addEventListener('click', () => {
       chrome.tabs.sendMessage(tab.id, { action: 'openCompetitorModal' }, (response) => {
         if (chrome.runtime.lastError) {
           console.error("Message sending error:", chrome.runtime.lastError.message);
-          alert('Please navigate to a YouTube channel page to open the competitors dashboard.');
         } else {
           console.log("Response from content script:", response?.status);
         }
