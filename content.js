@@ -15,14 +15,23 @@
     });
 
     if (chrome?.storage?.local) {
-      chrome.storage.local.get("competitors", ({ competitors = [] }) => {
-        btn.textContent = competitors.includes(channelId)
-          ? "❌ Remove Competitor"
-          : "⭐ Add as Competitor";
+      chrome.storage.local.get("competitors", (result) => {
+        // Context may have been invalidated — catch in callback
+        try {
+          if (!btn.isConnected) return;
+          const competitors = result?.competitors ?? [];
+          btn.textContent = competitors.includes(channelId)
+            ? "❌ Remove Competitor"
+            : "⭐ Add as Competitor";
+        } catch (e) {
+          console.warn("storage.local.get callback failed:", e);
+        }
       });
     } else {
       console.warn("chrome.storage.local not available during button render");
     }
+
+
 
     btn.onclick = () => {
       if (!chrome?.storage?.local) {
