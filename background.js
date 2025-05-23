@@ -41,3 +41,16 @@ chrome.action.onClicked.addListener((tab) => {
     }
   );
 });
+
+// Handle modal injection when triggered from content.js
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === "injectModalAndOpen" && sender.tab?.id) {
+    chrome.scripting.executeScript({
+      target: { tabId: sender.tab.id },
+      files: ["modal.js"]
+    }, () => {
+      chrome.tabs.sendMessage(sender.tab.id, { action: "openCompetitorModal" });
+    });
+  }
+});
+

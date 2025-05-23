@@ -34,10 +34,7 @@
 
 
     btn.onclick = () => {
-      if (!chrome?.storage?.local) {
-        console.warn("chrome.storage.local not available during button click");
-        return;
-      }
+      if (!chrome?.storage?.local) return;
 
       chrome.storage.local.get("competitors", ({ competitors = [] }) => {
         const list = [...competitors];
@@ -50,8 +47,8 @@
           list.push(channelId);
           btn.textContent = "❌ Remove Competitor";
 
-          // Auto-open dashboard modal
-          chrome.runtime.sendMessage({ action: "openCompetitorModal" });
+          // ✅ Inject modal.js before messaging
+          chrome.runtime.sendMessage({ action: "injectModalAndOpen" });
         }
 
         chrome.storage.local.set({ competitors: list });
